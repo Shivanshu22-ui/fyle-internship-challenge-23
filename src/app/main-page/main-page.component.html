@@ -1,0 +1,102 @@
+<div class="container">
+  <div class="flex justify-center my-6">
+    <div class="">
+      <div>
+        <form (ngSubmit)="searchGithubUser()" id="search-form" #f="ngForm" class="flex gap-2 items-center">
+          <div>
+            <input type="text"
+              class="border-red rounded-2xl p-2 min-w-[340px] border-2 border-[#d5d3d3] active:border-[#d5d3d3] selected:border-[#d5d3d3] touched:border-[#d5d3d3]"
+              ngModel name="search" placeholder="Enter github username to search..." required #search="ngModel">
+          </div>
+          <div class=" bg-[#b7b4b1] p-2 rounded-2xl px-4">
+            <button type="submit" class="btn btn-block btn-search" [disabled]="!f.valid">
+              Search User <i class="fa fa-arrow-right"></i>
+            </button>
+          </div>
+        </form>
+        <p class="text-red" *ngIf="!search.valid && search.touched"><small class="text-red-500">Fill in
+            field!</small></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-5">
+      <div class="card">
+        <img class="card-img-top" [src]="user.avatar_url" alt="My Image">
+        <div class="card-body text-center">
+          <p class="card-text">Name:<span> {{user.name}}</span></p>
+          <p>Username:<span> {{user.login}}</span></p>
+          <p>Joined on: <span class="badge rounded-pill bg-warning text-dark">{{user.created_at|date}}</span></p>
+          <div class="follow">
+            <p><i class="fas fa-user"></i><span>{{user.followers}}</span> Followers</p>
+            <p><i class="fas fa-user"></i><span>{{user.following}}</span> Following</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-7">
+      <div class="card">
+        <ul class="list-group list-group-flush my-details">
+          <li class="list-group-item">Name: <span>{{user.name}}</span></li>
+          <li class="list-group-item">Address: <span>{{user.location}}</span></li>
+          <li class="list-group-item">Public repos: <span
+              class="badge rounded-pill bg-warning text-dark">{{user.public_repos}}</span></li>
+        </ul>
+      </div>
+      <div class="card">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">About me</li>
+          <li class="list-group-item">
+            <p>{{user.bio}}</p>
+          </li>
+        </ul>
+      </div>
+      <div class="card">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">Github</li>
+          <li class="list-group-item">
+            <div>
+              <small><a class="btn btn-sm" href="https://github.com/{{ user.login }}" target="_blank"
+                  rel="noopener noreferrer">View Github <i class="fa fa-arrow-right"></i></a></small>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container repository" id="repository">
+  <div class="col-md-12">
+    <h1>My repositories</h1>
+  </div>
+  <div class="row flex flex-wrap mx-1 justify-between">
+    <div class="item col-xs-12 col-sm-6 col-md-4 mx-1"
+      *ngFor="let repository of repositories | paginate: { itemsPerPage: 10, currentPage: pageNumber }  let i=index">
+      <div class="card card-repo">
+        <span class="float-right"><i appStarRepository title="Star Repository" class="fa fa-star"></i></span>
+        <div class="card-body text-center">
+          <h4 class="card-title heading">{{repository.name}}</h4>
+          <p class="card-text">{{repository.description}}</p>
+        </div>
+        <div class="card-body text-center">
+          <p class="card-text"><strong>Created on: <span class="badge rounded-pill bg-warning text-dark">{{
+                repository.created_at}}</span></strong></p>
+          <p>Language: {{repository.language}}</p>
+          <a href="{{repository.html_url }}" target="_blank" class="card-link color-primary">View repository <i
+              class="fa fa-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav aria-label="Page navigation example">
+  <div class="list">
+    <pagination-controls (pageChange)="pageNumber = $event"></pagination-controls>
+  </div>
+</nav>
