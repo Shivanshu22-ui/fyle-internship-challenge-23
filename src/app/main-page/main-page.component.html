@@ -1,3 +1,6 @@
+<app-error *ngIf="profileError" [errorState]="profileError" [errorMessage]="'Error in loading profile'"></app-error>
+<app-error *ngIf="repoError" [errorState]="repoError" [errorMessage]="'Error in loading repositories'"></app-error>
+
 <div class="container">
   <div class="flex justify-center py-6 mb-2">
     <div class="">
@@ -8,14 +11,14 @@
               class="border-red rounded-2xl p-2 min-w-[340px] border-2 border-[#d5d3d3] active:border-[#d5d3d3] selected:border-[#d5d3d3] touched:border-[#d5d3d3]"
               ngModel name="search" placeholder="Enter github username to search..." required #search="ngModel">
           </div>
-          <div
-            class=" bg-[#b7b4b1] p-2 rounded-[50%] h-[40px] w-[40px] p-2 cursor-pointer flex justify-center items-center"
-            [ngClass]="{'bg-[#0000005c]':!f.valid}">
-            <button type="submit" class="flex justify-center items-center" [disabled]="!f.valid">
+          <button type="submit" class="flex justify-center items-center" [disabled]="!f.valid">
+            <div
+              class=" bg-[#b7b4b1] p-2 rounded-[50%] h-[40px] w-[40px] p-2 cursor-pointer flex justify-center items-center"
+              [ngClass]="{'bg-[#0000005c]':!f.valid}">
               <!-- Search User <i class="fa fa-arrow-right"></i> -->
               <img class="h-[20px]" src="../../assets/icons/Search.svg" alt="search">
-            </button>
-          </div>
+            </div>
+          </button>
         </form>
         <p class="text-red" *ngIf="!search.valid && search.touched"><small class="text-red-500">Fill in
             field!</small></p>
@@ -25,6 +28,7 @@
 </div>
 
 <div class="flex justify-center items-center flex-col">
+  <app-profile-skeleton *ngIf="profileLoading"></app-profile-skeleton>
   <div class="container lg:max-w-[1180px] lg:max-w-[80vw]">
     <div class="flex gap-2 md:gap-8 justify-between">
       <div class="md:w-2/5">
@@ -74,10 +78,22 @@
     </div>
   </div>
 
+
   <div class="container lg:max-w-[1180px] lg:max-w-[80vw] my-4" id="repository">
-    <div class="">
-      <h1 class="font-bold text-[24px] text-[#515151] px-8">My Repositories</h1>
+    <div class="flex justify-between  ">
+      <div>
+        <h1 class="font-bold text-[24px] text-[#515151] px-8">My Repositories</h1>
+      </div>
+      <div class="px-8"> <select [(ngModel)]="perPage" (change)="handlePerPageChange()" >
+          <option *ngFor="let option of perPageOptions" [value]="option">{{ option }}</option>
+        </select></div>
     </div>
+    <div class="flex flex-wrap mx-1 justify-between" *ngIf="repoLoading">
+      <div *ngFor="let data of [0,1,2,3,4,5,6,7,8,9]">
+        <app-repo-skeleton></app-repo-skeleton>
+      </div>
+    </div>
+
     <div class="flex flex-wrap mx-1 justify-between">
       <div
         class="item col-xs-12 col-sm-6 col-md-4 min-w-[320px] md:max-w-[340px] md:w-[340px] mx-2 my-4 p-2 py-4 rounded-md bg-[#f0eeee] flex flex-col flex-1"
@@ -93,7 +109,7 @@
               <p class="card-text">Created on: <span class="badge rounded-pill bg-warning text-dark">{{
                   formatDateString(repository.created_at)}}</span></p>
             </div>
-            
+
           </div>
           <div class="bg-[#dddddd] py-1 mt-2 text-center cursor-pointer px-3">
             <a href="{{repository.html_url }}" target="_blank">View repository <i class="fa fa-arrow-right"></i></a>
@@ -101,17 +117,19 @@
         </div>
       </div>
     </div>
+
+    <nav class="mt-4 mx-4">
+      <div class="list">
+        <div class="pagination">
+          <button class="p-1 py-1 rounded text-[#fff] mx-2 bg-[#00aeff] " (click)="onPageChange(currentPage - 1)"
+            [disabled]="currentPage === 1">Previous</button>
+          <span>{{ currentPage }}</span>
+          <button class="p-4 py-1 rounded text-[#fff] mx-2 bg-[#00aeff] " (click)="onPageChange(currentPage + 1)"
+            [disabled]="currentPage === totalPages || repoLoading">Next</button>
+        </div>
+
+      </div>
+    </nav>
   </div>
 
 </div>
-<nav aria-label="Page navigation example">
-  <div class="list">
-    <!-- <pagination-controls (pageChange)="currentPage = $event"></pagination-controls> -->
-    <!-- <pagination-controls (pageChange)="pageFunc($event)"></pagination-controls> -->
-    <div class="pagination">
-      <button class="btn btn-primary" (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">Previous</button>
-      <span>{{ currentPage }}</span>
-      <button class="btn btn-primary" (click)="onPageChange(currentPage + 1)" [disabled]="repositories.length < perPage">Next</button>
-    </div>
-  </div>
-</nav>
