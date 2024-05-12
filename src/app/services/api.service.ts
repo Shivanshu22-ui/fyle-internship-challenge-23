@@ -13,9 +13,10 @@ export class ApiService {
       `https://api.github.com/users/${githubUsername}`
     );
   }
-  getRepository(githubUsername: string, page: number = 10) {
+  getRepository(githubUsername: string, currentPage: number = 1, per_page: number =10) {
     return this.httpClient.get(
-      `https://api.github.com/users/${githubUsername}/repos?per_page=${page}`
+      `https://api.github.com/users/${githubUsername}/repos?page=${currentPage}&per_page=${per_page}`
+      // `https://api.github.com/users/${githubUsername}/repos`
     );
   }
 

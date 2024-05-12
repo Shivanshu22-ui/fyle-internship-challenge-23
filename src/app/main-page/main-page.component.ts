@@ -12,16 +12,19 @@ import { ApiService } from '../services/api.service';
 export class MainPageComponent {
   user!: any;
   searchText!: string;
-  repositories: any;
-  pageNumber: any = 1;
+  repositories: any=[];
+  currentUser:string= "Shivanshu22-ui";
+  pageNumber: number = 1;
+  currentPage: number = 1;
+  perPage: number = 10;
   loading: boolean = false;
   constructor(private apiService: ApiService) {}
 
   @ViewChild('f')
   searchForm!: NgForm;
   ngOnInit(): void {
-    this.getUserDetails('Shivanshu22-ui');
-    this.getUserRepositories('Shivanshu22-ui');
+    this.getUserDetails(this.currentUser);
+    this.getUserRepositories(this.currentUser);
     console.log(this.user, 'user');
   }
 
@@ -32,24 +35,14 @@ export class MainPageComponent {
     this.pageNumber--;
   }
   onPageChange(pg: any) {
-    this.pageNumber = pg;
+    this.currentPage = pg;
+    this.getUserRepositories(this.currentUser)
   }
   getUserDetails(githubUsername: string) {
     this.loading = true;
-    // this.repositoryUserService.getUserResponse(githubUsername).then(
-    //   (response) => {
-    //     this.user = this.repositoryUserService.getUserDetails;
-    //     this.loading = false;
-    //   },
-    //   (error) => {
-    //     console.log(error);
-    //     this.loading = false;
-    //   }
-    // );
 
     this.apiService.getUser(githubUsername).subscribe(
       (res) => {
-        console.log(res, 'response from github', typeof res);
         this.user = res;
         this.loading = false;
       },
@@ -61,22 +54,10 @@ export class MainPageComponent {
   }
 
   getUserRepositories(githubUsername: string) {
-    // this.loading = true;
-    // this.repositoryUserService.getRepositoryResponse(githubUsername,this.pageNumber).then(
-    //   (response) => {
-    //     this.repositories = this.repositoryUserService.getRepositoryDetails;
-    //     console.log(this.repositories);
-    //     // this.loading = false;
-    //   },
-    //   (error) => {
-    //     console.log(error);
-    //     // this.loading = false;
-    //   }
-    // );
-    this.apiService.getRepository(githubUsername).subscribe(
-      (res) => {
+    this.apiService.getRepository(githubUsername,this.currentPage, this.perPage).subscribe(
+      (res:any) => {
         console.log(res, 'response from github', typeof res);
-        this.repositories = res;
+        this.repositories = [...this.repositories,...res];
         this.loading = false;
       },
       (err) => {
@@ -88,17 +69,24 @@ export class MainPageComponent {
 
   searchGithubUser() {
     this.searchText = this.searchForm.value.search;
+    this.currentUser = this.searchForm.value.search;
     this.getUserDetails(this.searchText);
     this.getUserRepositories(this.searchText);
-    // this.repositoryUserService.getUserResponse(this.searchText).then(
-    //   (response) => {
-    //     this.user = this.repositoryUserService.getUserDetails;
-    //     // this.displayUserDetailContainer = true;
-    //   },
-    //   (error) => {
-    //     console.log(error);
-    //     // this.displayGithubUserErrorNotFound = true;
-    //   }
-    // );
+  }
+
+
+  formatDateString(dateString: string): string {
+    const dateObject = new Date(dateString);
+    const formattedDate = dateObject.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
+    return formattedDate;
+  }
+
+  pageFunc(eve:any){
+    console.log(eve,"eve");
+    
   }
 }
