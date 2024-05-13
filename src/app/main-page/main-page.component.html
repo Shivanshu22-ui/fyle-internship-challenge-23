@@ -30,15 +30,15 @@
 <div class="flex justify-center items-center flex-col">
   <app-profile-skeleton *ngIf="profileLoading"></app-profile-skeleton>
   <div class="container lg:max-w-[1180px] lg:max-w-[80vw]">
-    <div class="flex gap-2 md:gap-8 justify-between">
+    <div class="flex gap-2 md:gap-8 justify-between" *ngIf="!profileError">
       <div class="md:w-2/5">
         <div class="flex justify-center items-center flex-col gap-2">
           <img class="w-[200px] rounded-[50%]" [src]="user.avatar_url" alt="My Image">
           <div class="card">
-            <p class="font-bold text-[24px] text-[#515151]">{{user.name}}</p>
-            <p class="text-[20px] text-[#515151]">{{user.login}}</p>
+            <p class="font-bold text-[24px] text-[#515151] name">{{user.name}}</p>
+            <p class="text-[20px] text-[#515151] username">{{user.login}}</p>
             <!-- <p>Joined on: <span class="badge rounded-pill bg-warning text-dark">{{user.created_at|date}}</span></p> -->
-            <div class="flex gap-2">
+            <div class="flex gap-2" >
               <p>{{user.followers}} Followers</p>
               <p>{{user.following}} Following</p>
             </div>
@@ -125,7 +125,7 @@
             [disabled]="currentPage === 1">Previous</button>
           <span>{{ currentPage }}</span>
           <button class="p-4 py-1 rounded text-[#fff] mx-2 bg-[#00aeff] " (click)="onPageChange(currentPage + 1)"
-            [disabled]="currentPage === totalPages || repoLoading">Next</button>
+            [disabled]="currentPage === totalPages || repoLoading || repoError || profileError">Next</button>
         </div>
 
       </div>

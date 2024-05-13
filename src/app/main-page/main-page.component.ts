@@ -107,7 +107,8 @@ export class MainPageComponent {
   handlePerPageChange() {
     this.repositories = [];
     this.currentPage = 1;
-    this.getUserRepositories(this.currentUser);
+    this.totalPages = Math.ceil(this.totalRepos / this.perPage);
+    if(!this.repoError && !this.profileError)this.getUserRepositories(this.currentUser);
   }
 
   formatDateString(dateString: string): string {

@@ -10,7 +10,7 @@ export class ApiService {
   private defaultHeaders: HttpHeaders;
   constructor(private httpClient: HttpClient) {
     this.defaultHeaders = new HttpHeaders({
-      'Authorization': `Bearer ${environment.authToken}` // Replace with your authentication token
+      'Authorization': `Bearer ` // Replace with your authentication token
     });
   }
 
@@ -25,7 +25,6 @@ export class ApiService {
     return this.httpClient.get(
       `${environment.domain}/users/${githubUsername}/repos?page=${currentPage}&per_page=${per_page}`,
       { headers: this.defaultHeaders }
-      // `https://api.github.com/users/${githubUsername}/repos`
     );
   }
 
